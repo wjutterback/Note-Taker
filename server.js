@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 3030;
 const server = require('http').Server(app);
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const { v4: uuidv4 } = require('uuid');
+
 app.use(express.static('public'));
 
 app.use(bodyParser.json());
@@ -24,15 +26,13 @@ app.get('/api/notes', (req, res) => {
 //TODO: add unique ID, return new note to the client
 app.post('/api/notes', (req, res) => {
   const notes = JSON.parse(fs.readFileSync('./db/db.json'));
-  notes.push(req.body);
+  const newNote = JSON.stringify(req.body);
+  const newParse = JSON.parse(newNote);
+  const noteID = Object.assign(newParse, { id: `${uuidv4()}` });
+  notes.push(noteID);
   const stringNote = JSON.stringify(notes);
-  console.log(stringNote);
-  console.log('note', notes);
-
+  console.log('stringNote', stringNote);
   fs.writeFileSync('./db/db.json', stringNote);
-
-  // should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client.
-  // Each note needs uuid value.
 });
 
 server.listen(PORT, () => {
