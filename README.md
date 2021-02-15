@@ -8,7 +8,7 @@
 
 ## Link to Deployed Application
 
-https://wills-note-taker.herokuapp.com/notes
+https://wills-note-taker.herokuapp.com/
 
 ## ![My Note Taker](/public/assets/img/note-taker.PNG)
 
