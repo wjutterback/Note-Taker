@@ -6,6 +6,7 @@ const server = require('http').Server(app);
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
+const { url } = require('inspector');
 
 app.use(express.static('public'));
 
@@ -23,7 +24,6 @@ app.get('/api/notes', (req, res) => {
   res.json(notes);
 });
 
-//TODO: add unique ID, return new note to the client
 app.post('/api/notes', (req, res) => {
   const notes = JSON.parse(fs.readFileSync('./db/db.json'));
   const newNote = JSON.stringify(req.body);
@@ -31,8 +31,22 @@ app.post('/api/notes', (req, res) => {
   const noteID = Object.assign(newParse, { id: `${uuidv4()}` });
   notes.push(noteID);
   const stringNote = JSON.stringify(notes);
-  console.log('stringNote', stringNote);
   fs.writeFileSync('./db/db.json', stringNote);
+  res.json(notes);
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+  const notes = JSON.parse(fs.readFileSync('./db/db.json'));
+  console.log(notes);
+  const noteID = req.params.id;
+  for (let i = 0; i < notes.length; i++) {
+    if (notes[i].id === noteID) {
+      notes.splice(i, 1);
+      const newNotes = JSON.stringify(notes);
+      fs.writeFileSync('./db/db.json', newNotes);
+      return res.json(notes);
+    }
+  }
 });
 
 server.listen(PORT, () => {
