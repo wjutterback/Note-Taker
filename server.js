@@ -6,7 +6,6 @@ const server = require('http').Server(app);
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
-const { url } = require('inspector');
 
 app.use(express.static('public'));
 
@@ -15,6 +14,7 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
+
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
@@ -37,7 +37,6 @@ app.post('/api/notes', (req, res) => {
 
 app.delete('/api/notes/:id', (req, res) => {
   const notes = JSON.parse(fs.readFileSync('./db/db.json'));
-  console.log(notes);
   const noteID = req.params.id;
   for (let i = 0; i < notes.length; i++) {
     if (notes[i].id === noteID) {
